@@ -1,0 +1,14 @@
+html,
+body,
+table,
+{
+	width: 100%;
+}
+td.urlPath
+{
+	max-width: 20em;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	direction: rtl;
+}
