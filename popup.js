@@ -1,5 +1,4 @@
 var ruleTable = document.getElementById("ruleTable");
-var wtf = document.getElementById("wtf");
 
 function onRequestRuleChange (evt)
 {
