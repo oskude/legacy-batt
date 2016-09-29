@@ -17,9 +17,14 @@ body
 	max-width: 30em;
 	word-wrap: break-word;
 }
+thead>tr>td:first-child,
 tbody>tr>td:first-child
 {
 	text-align: right;
+}
+thead>tr>td:last-child
+{
+	text-align: center;
 }
 tbody>tr:nth-child(odd)
 {
@@ -42,7 +47,6 @@ tr
 thead>tr>td
 {
 	font-weight: bold;
-	text-align: center;
 }
 .queryString
 {
