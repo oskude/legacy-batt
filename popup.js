@@ -28,16 +28,24 @@ function createRuleRow (rule, index)
 	cbox.onchange = onRequestRuleChange;
 
 	var cell = row.insertCell();
+	cell.classList.add("textCell");
+	cell.appendChild(document.createTextNode(index));
+
+	var cell = row.insertCell();
+	cell.classList.add("textCell");
 	cell.appendChild(document.createTextNode(protocol));
 
 	var cell = row.insertCell();
+	cell.classList.add("textCell");
 	cell.appendChild(document.createTextNode(host));
 
 	var cell = row.insertCell();
+	cell.classList.add("textCell");
+	cell.classList.add("urlPath");
 	cell.appendChild(document.createTextNode(path));
-	cell.className = "urlPath";
 
 	var cell = row.insertCell();
+	cell.classList.add("textCell");
 	cell.appendChild(document.createTextNode(rule.type));
 
 	var cell = row.insertCell();
@@ -49,4 +57,31 @@ chrome.storage.local.get("myRequests", (item)=>{
 		var req = item.myRequests[i];
 		createRuleRow(req, i);
 	}
+
+	var thead = ruleTable.createTHead();
+	var trow = thead.insertRow();
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("O"));
+	cell.title = "Order";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("Proto"));
+	cell.title = "Protocol";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("Host"));
+	cell.title = "Host";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("Path"));
+	cell.title = "Path";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("Type"));
+	cell.title = "Type";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("D"));
+	cell.title = "Download";
 });
