@@ -16,10 +16,7 @@ function createRuleRow (rule, index)
 {
 	var row = ruleTable.insertRow();
 	var cbox = document.createElement("input");
-	var match = rule.url.match(/(^.+):\/\/([^\/]+)(.*)/);
-	var protocol = match[1];
-	var host = match[2];
-	var path = match[3];
+	var url = new URL(rule.url);
 
 	cbox.type = "checkbox";
 	cbox.checked = rule.allowRequest;
@@ -33,16 +30,16 @@ function createRuleRow (rule, index)
 
 	var cell = row.insertCell();
 	cell.classList.add("textCell");
-	cell.appendChild(document.createTextNode(protocol));
+	cell.appendChild(document.createTextNode(url.protocol));
 
 	var cell = row.insertCell();
 	cell.classList.add("textCell");
-	cell.appendChild(document.createTextNode(host));
+	cell.appendChild(document.createTextNode(url.host));
 
 	var cell = row.insertCell();
 	cell.classList.add("textCell");
 	cell.classList.add("urlPath");
-	cell.appendChild(document.createTextNode(path));
+	cell.appendChild(document.createTextNode(url.pathname + url.search));
 
 	var cell = row.insertCell();
 	cell.classList.add("textCell");
