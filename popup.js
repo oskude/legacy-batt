@@ -37,9 +37,17 @@ function createRuleRow (rule, index)
 	cell.appendChild(document.createTextNode(url.host));
 
 	var cell = row.insertCell();
+	var node = document.createElement("span");
+	node.appendChild(document.createTextNode(url.pathname));
+	cell.appendChild(node);
+	if (url.search) {
+		var node = document.createElement("span");
+		node.appendChild(document.createTextNode(url.search));
+		node.classList.add("queryString");
+		cell.appendChild(node);
+	}
 	cell.classList.add("textCell");
 	cell.classList.add("urlPath");
-	cell.appendChild(document.createTextNode(url.pathname + url.search));
 
 	var cell = row.insertCell();
 	cell.classList.add("textCell");

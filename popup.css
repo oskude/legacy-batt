@@ -44,3 +44,7 @@ thead>tr>td
 	font-weight: bold;
 	text-align: center;
 }
+.queryString
+{
+	color: hsl(360, 80%, 50%);
+}
