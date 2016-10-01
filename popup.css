@@ -17,14 +17,16 @@ body
 	max-width: 30em;
 	word-wrap: break-word;
 }
+thead>tr>td:hover
+{
+	cursor: pointer;
+	background: black;
+	color: white;
+}
 thead>tr>td:first-child,
 tbody>tr>td:first-child
 {
 	text-align: right;
-}
-thead>tr>td:last-child
-{
-	text-align: center;
 }
 tbody>tr:nth-child(odd)
 {
@@ -34,11 +36,19 @@ tbody>tr:hover
 {
 	background: rgba(0, 0, 0, 0.15);
 }
-th,
 td
 {
 	padding: 0.35em;
 	line-height: 1.5em;
+}
+thead>tr>td:last-child
+{
+	text-align: center;
+}
+td:last-child
+{
+	padding: 0;
+	padding-bottom: 0.25em;
 }
 tr
 {
@@ -51,4 +61,16 @@ thead>tr>td
 .queryString
 {
 	color: hsl(360, 80%, 50%);
+}
+select
+{
+	cursor: pointer;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	padding: 0 0.15em;
+	margin: 0;
+	font-size: 130%;
+	border: none;
+	background: none;
 }

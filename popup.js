@@ -1,28 +1,65 @@
-var ruleTable = document.getElementById("ruleTable");
-
-function onRequestRuleChange (evt)
+var BattRuleUi = function (parent, api)
 {
-	chrome.runtime.sendMessage({
-		"type": "setRequestRule",
-		"data": {
-			"requestListIndex": evt.target.dataset.requestListIndex,
-			"url": evt.target.dataset.url,
-			"allowRequest": evt.target.checked
-		}
-	});
+	this.api = api;
+	this.rowData = [];
+	this.table = document.createElement("table");
+	this.table.cellPadding = 0;
+	this.table.cellSpacing = 0;
+	parent.appendChild(this.table);
 }
 
-function createRuleRow (rule, index)
+BattRuleUi.prototype.render = function (tabId)
 {
-	var row = ruleTable.insertRow();
-	var cbox = document.createElement("input");
-	var url = new URL(rule.url);
+	var requests = this.api.battRequests[tabId];
+	var host = this.api.battTabs[tabId];
 
-	cbox.type = "checkbox";
-	cbox.checked = rule.allowRequest;
-	cbox.dataset.url = rule.url;
-	cbox.dataset.requestListIndex = index;
-	cbox.onchange = onRequestRuleChange;
+	for (var i in requests) {
+		var request = requests[i];
+		var row = this.api.getRule(host, request.url);
+		row.host = host;
+		row.type = request.type;
+		row.url = request.url;
+		this.rowData.push(row);
+		this._renderRow(i, row);
+	}
+
+	this._renderHead();
+}
+
+BattRuleUi.prototype._renderHead = function ()
+{
+	var thead = this.table.createTHead();
+	var trow = thead.insertRow();
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("O"));
+	cell.title = "Order";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("Proto"));
+	cell.title = "Protocol";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("Host"));
+	cell.title = "Host";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("Path"));
+	cell.title = "Path";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("Type"));
+	cell.title = "Type";
+
+	var cell = trow.insertCell();
+	cell.appendChild(document.createTextNode("D"));
+	cell.title = "Download";
+}
+
+BattRuleUi.prototype._renderRow = function (index, data)
+{
+	var url = new URL(data.url);
+	var row = this.table.insertRow();
 
 	var cell = row.insertCell();
 	cell.classList.add("textCell");
@@ -51,42 +88,61 @@ function createRuleRow (rule, index)
 
 	var cell = row.insertCell();
 	cell.classList.add("textCell");
-	cell.appendChild(document.createTextNode(rule.type));
+	cell.appendChild(document.createTextNode(data.type));
 
 	var cell = row.insertCell();
-	cell.appendChild(cbox);
+	var sel = document.createElement("select");
+	sel.dataset.rowDataIndex = index;
+	sel.title = "never";
+	var opt = document.createElement("option");
+	opt.value = 0;
+	opt.text = "○";
+	opt.title = "never"; // TODO: doesnt really work?
+	sel.add(opt);
+	var opt = document.createElement("option");
+	opt.value = 1;
+	opt.text = "◍";
+	opt.title = "temporary";
+	if (data.allowTemporary) {
+		opt.selected = true;
+		sel.title = "temporary"
+	}
+	sel.add(opt);
+	var opt = document.createElement("option");
+	opt.value = 2;
+	opt.text = "●";
+	opt.title = "always";
+	if (data.allowAllways) {
+		opt.selected = true;
+		sel.title = "always";
+	}
+	sel.add(opt);
+	sel.onchange = this._onRequestRuleChange.bind(this);
+	cell.appendChild(sel);
 }
 
-chrome.storage.local.get("myRequests", (item)=>{
-	for (var i in item.myRequests) {
-		var req = item.myRequests[i];
-		createRuleRow(req, i);
+BattRuleUi.prototype._onRequestRuleChange = function (evt)
+{
+	var i = evt.target.dataset.rowDataIndex;
+	var x = evt.target.selectedIndex;
+	evt.target.title = evt.target.options[x].title;
+	this.api.setRule(
+		this.rowData[i].host,
+		this.rowData[i].url,
+		evt.target.selectedIndex
+	);
+}
+
+chrome.tabs.query(
+	{
+		active: true,
+		currentWindow: true
+	},
+	(tabs)=>{
+		var ui = new BattRuleUi(
+			document.body,
+			chrome.extension.getBackgroundPage()
+		);
+		ui.render(tabs[0].id);
 	}
-
-	var thead = ruleTable.createTHead();
-	var trow = thead.insertRow();
-
-	var cell = trow.insertCell();
-	cell.appendChild(document.createTextNode("O"));
-	cell.title = "Order";
-
-	var cell = trow.insertCell();
-	cell.appendChild(document.createTextNode("Proto"));
-	cell.title = "Protocol";
-
-	var cell = trow.insertCell();
-	cell.appendChild(document.createTextNode("Host"));
-	cell.title = "Host";
-
-	var cell = trow.insertCell();
-	cell.appendChild(document.createTextNode("Path"));
-	cell.title = "Path";
-
-	var cell = trow.insertCell();
-	cell.appendChild(document.createTextNode("Type"));
-	cell.title = "Type";
-
-	var cell = trow.insertCell();
-	cell.appendChild(document.createTextNode("D"));
-	cell.title = "Download";
-});
+);
